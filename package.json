@@ -2,10 +2,16 @@
   "name": "tdm_sw",
   "version": "1.0.0",
   "description": "Tyler de Mier's Spotify Wrapped",
-  "main": "index.js",
+  "main": "server/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server/index.js"
   },
   "author": "Tyler de Mier",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "request": "^2.88.2"
+  }
 }
