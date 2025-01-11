@@ -31,11 +31,12 @@ app.use(express.json());
  * Ruta para autenticar y obtener tokens
  */
 app.get('/login', (req, res) => {
+    console.log("Redirect URI usada:", redirect_uri);
     const scopes = 'user-read-recently-played user-read-playback-state';
     const auth_url = `https://accounts.spotify.com/authorize?response_type=code&client_id=${client_id}&scope=${encodeURIComponent(
         scopes
     )}&redirect_uri=${encodeURIComponent(redirect_uri)}`;
-
+    console.log("auth_url URI usada:", auth_url);
     res.redirect(auth_url);
 });
 
@@ -77,31 +78,30 @@ app.get('/callback', (req, res) => {
 /**
  * Ruta para refrescar el token
  */
-app.get('/refresh_token', (req, res) => {
-    const refresh_token = req.query.refresh_token;
+app.get('/refresh_token', function(req, res) {
 
-    const authOptions = {
+    var refresh_token = req.query.refresh_token;
+    var authOptions = {
         url: 'https://accounts.spotify.com/api/token',
         headers: {
-            Authorization:
-                'Basic ' +
-                Buffer.from(`${client_id}:${client_secret}`).toString('base64'),
+            'content-type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Basic ' + (new Buffer.from(client_id + ':' + client_secret).toString('base64'))
         },
         form: {
             grant_type: 'refresh_token',
-            refresh_token: refresh_token,
+            refresh_token: refresh_token
         },
-        json: true,
+        json: true
     };
 
-    request.post(authOptions, (error, response, body) => {
+    request.post(authOptions, function(error, response, body) {
         if (!error && response.statusCode === 200) {
-            const { access_token } = body;
-            res.json({
-                access_token: access_token,
+            var access_token = body.access_token,
+                refresh_token = body.refresh_token || refresh_token;
+            res.send({
+                'access_token': access_token,
+                'refresh_token': refresh_token
             });
-        } else {
-            res.status(response.statusCode).send('Error al refrescar token');
         }
     });
 });
