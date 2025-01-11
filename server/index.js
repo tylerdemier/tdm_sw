@@ -10,7 +10,7 @@ const request = require('request');
 const dotenv = require('dotenv');
 const cors = require('cors');
 
-dotenv.config();
+require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 8888;
 
@@ -20,6 +20,11 @@ const port = process.env.PORT || 8888;
 const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
 const redirect_uri = process.env.REDIRECT_URI;
+
+if (!client_id || !client_secret || !redirect_uri) {
+    console.error("Error: Las variables CLIENT_ID, CLIENT_SECRET o REDIRECT_URI no están configuradas.");
+    process.exit(1); // Salir del proceso si no están configuradas
+}
 
 /**
  * Middleware
